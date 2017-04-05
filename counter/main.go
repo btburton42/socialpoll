@@ -93,18 +93,17 @@ func main() {
 			}
 		}
 		updater.Reset(updateDuration)
-
-		termChan := make(chan os.Signal, 1)
-		signal.Notify(termChan, syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
-		for {
-			select {
-			case <-termChan:
-				updater.Stop()
-				q.Stop()
-			case <-q.StopChan:
-				//finished
-				return
-			}
-		}
 	})
+	termChan := make(chan os.Signal, 1)
+	signal.Notify(termChan, syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
+	for {
+		select {
+		case <-termChan:
+			updater.Stop()
+			q.Stop()
+		case <-q.StopChan:
+			//finished
+			return
+		}
+	}
 }
