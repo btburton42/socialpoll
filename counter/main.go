@@ -31,7 +31,7 @@ func main() {
 		}
 	}()
 	log.Println("Connecting to database...")
-	db, err := mgo.Dial("localhost")
+	db, err := mgo.Dial("database")
 	if err != nil {
 		fatal(err)
 		return
@@ -63,7 +63,7 @@ func main() {
 		return nil
 	}))
 
-	if err := q.ConnectToNSQLookupd("localhost:4161"); err != nil {
+	if err := q.ConnectToNSQLookupd("nsqlookupd:4161"); err != nil {
 		fatal(err)
 		return
 	}

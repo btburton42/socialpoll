@@ -12,7 +12,7 @@ import (
 func main() {
 	var (
 		addr = flag.String("addr", ":8080", "endpoint address")
-		mongo = flag.String("mongo", "localhost", "mongodb address")
+		mongo = flag.String("mongo", "database", "mongodb address")
 	)
 	flag.Parse()
 	log.Println("Dialing mongo", *mongo)

@@ -1,0 +1,56 @@
+version: '3'
+services:
+  api:
+    build: ./api/.
+    links:
+      - database:database
+    ports:
+      - "8080:8080"
+
+  counter:
+    build: ./counter/.
+    links:
+      - database:database
+      - nsqd:nsqd
+
+  twittervotes:
+    build: ./twittervotes/.
+    env_file:
+      - ./docker-setup.env
+    links:
+      - database:database
+      - nsqd:nsqd
+
+  web:
+    build: ./web/.
+    ports:
+      - "8081:8081"
+
+  database:
+    image: mongo:3.0
+    command: mongod --smallfiles --quiet --logpath=/dev/null
+
+  nsqlookupd:
+    image: nsqio/nsq
+    ports:
+      - "4160:4160"
+      - "4161:4161"
+    command: /nsqlookupd -broadcast-address=nsqlookupd
+
+  nsqd:
+    image: nsqio/nsq
+    ports:
+      - "4150:4150"
+      - "4151:4151"
+    links:
+      - nsqlookupd:nsqlookupd
+    command: /nsqd -lookupd-tcp-address=nsqlookupd:4160 -broadcast-address=nsqd
+
+  nsqadmin:
+    image: nsqio/nsq
+    ports:
+      - "4171:4171"
+    links:
+      - nsqlookupd:nsqlookupd
+      - nsqd:nsqd
+    command: /nsqadmin -lookupd-http-address=nsqlookupd:4161
